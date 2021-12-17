@@ -32,12 +32,12 @@ namespace Pokemon
         private const string regexName = @"<title>(.*?)｜ポケモン図鑑(.*?)｜ポケモン徹底攻略</title>";
         private const string regexType = @"タイプ</td><td><ul class=""type""><li><a href=""(.*?)""><img src=""(.*?)"" alt=""(.*?)"" /></a></li>(.*?)</ul></td></tr>";
         private const string regexType2 = @"<a href=""(.*?)""><img src=""(.*?)"" alt=""(.*?)"" />";
-        private const string regexHp = @"HP</td>(.*?)&nbsp;(\d+)</td></tr>";
-        private const string regexAttack = @"こうげき</td>(.*?)&nbsp;(\d+)</td></tr>";
-        private const string regexDefence = @"ぼうぎょ</td>(.*?)&nbsp;(\d+)</td></tr>";
-        private const string regexSAttack = @"とくこう</td>(.*?)&nbsp;(\d+)</td></tr>";
-        private const string regexSDefence = @"とくぼう</td>(.*?)&nbsp;(\d+)</td></tr>";
-        private const string regexSpeed = @"すばやさ</td>(.*?)&nbsp;(\d+)</td></tr>";
+        private const string regexHp = @"HP</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
+        private const string regexAttack = @"こうげき</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
+        private const string regexDefence = @"ぼうぎょ</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
+        private const string regexSAttack = @"とくこう</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
+        private const string regexSDefence = @"とくぼう</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
+        private const string regexSpeed = @"すばやさ</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
         private const string regexMove = @"data-power=""(\d+)""><td class=""move_condition_cell"">(.*?)</td><td colspan=""7"" class=""move_name_cell""><a href=""\./search/\?move=(\d+)"">(.*?)</a>(.*?)</td></tr>(\s*?)<tr class=""move_detail_row""><td><span class=""type (.*?)"">(.*?)</span></td><td class=""(.*?)""><span class=""(.*?)"">(.*?)</span></td>(.*?)<td>(\d+)</td>(.*?)</td><td>(\d+)</td><td>(\d+)</td><td>(.*?)</td><td class=""move_ex_cell"">(.*?)</td></tr>";
 
 
