@@ -246,7 +246,7 @@ namespace Pokemon
 			// かくとう
 			if (m.GetType().Equals("かくとう"))
 			{
-				if (dfType.Equals("ノーマル") || dfType.Equals("こおり") || dfType.Equals("いわ") || dfType.Equals("あく") || dfType.Equals("	はがね"))
+				if (dfType.Equals("ノーマル") || dfType.Equals("こおり") || dfType.Equals("いわ") || dfType.Equals("あく") || dfType.Equals("はがね"))
 					multiplier = 2.0d;
 				if (dfType.Equals("どく") || dfType.Equals("ひこう") || dfType.Equals("エスパー") || dfType.Equals("むし") || dfType.Equals("フェアリー"))
 					multiplier = 0.5d;
