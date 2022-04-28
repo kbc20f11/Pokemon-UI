@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -39,6 +40,7 @@ namespace Pokemon
         private const string regexSDefence = @"とくぼう</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
         private const string regexSpeed = @"すばやさ</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
         private const string regexMove = @"data-power=""(\d+)""><td class=""move_condition_cell"">(.*?)</td><td colspan=""7"" class=""move_name_cell""><a href=""\./search/\?move=(\d+)"">(.*?)</a>(.*?)</td></tr>(\s*?)<tr class=""move_detail_row""><td><span class=""type (.*?)"">(.*?)</span></td><td class=""(.*?)""><span class=""(.*?)"">(.*?)</span></td>(.*?)<td>(\d+)</td>(.*?)</td><td>(\d+)</td><td>(\d+)</td><td>(.*?)</td><td class=""move_ex_cell"">(.*?)</td></tr>";
+        private const string regexMove2 = @"data-power=""(\d+)"">(.*?)</td><td colspan=""7"" class=""move_name_cell""><a href=""\./search/\?move=(\d+)"">(.*?)</a></td></tr>(\s*?)<tr class=""move_detail_row""><td><span class=""type(.*?)"">(.*?)</span></td><td class=""(.*?)""><span class=""(.*?)"">(.*?)</span></td><td>(\d+)</td><td>(\d+)</td><td>(\d+)</td><td>(.*?)</td><td class=""move_ex_cell"">(.*?)</td></tr>";
 
 
         /* --- フィールド --- */
@@ -136,14 +138,19 @@ namespace Pokemon
                 _speed = mSpeed.Groups[2].Value;
 
             // 技
-            // Search all moves for the pokemon
+            // ポケモンのすべてのわざをスキャン
             MatchCollection mc = Regex.Matches(html, regexMove);
+
+            // 技2
+            // ポケモンのわざ2をスキャン
+            MatchCollection mc2 = Regex.Matches(html, regexMove2);
 
             // stringbuilderを初期化
             StringBuilder sb = new StringBuilder();
 
             // 技の配列を用意
-            string[] strArray = new string[mc.Count];
+            var moveList  = new List<string>();
+
 
             // そのポケモンが持っているすべての技を配列に格納
             for (int i = 0; i< mc.Count; i++)
@@ -162,19 +169,46 @@ namespace Pokemon
                 sb.Append(", 説明:");
                 sb.Append(mc[i].Groups[18].Value);
 
-                // 配列に格納
-                strArray[i] = sb.ToString();
+                // リストに格納
+                moveList.Add(sb.ToString());
 
-                // StringBuilderを開放
+                // stringbuilderをクリア
                 sb.Clear();
+
             }
 
+            // そのポケモンが持っているすべての技2を配列に格納
+            for (int i = 0; i < mc2.Count; i++)
+            {
+                // ひとつづつappend
+                sb.Append("名前:");
+                sb.Append(mc2[i].Groups[4].Value);
+                sb.Append(", タイプ: ");
+                sb.Append(mc2[i].Groups[7].Value);
+                sb.Append(", 物/特:");
+                sb.Append(mc2[i].Groups[10].Value);
+                sb.Append(", 威力:");
+                sb.Append(mc2[i].Groups[12].Value);
+                sb.Append(", 命中率:");
+                sb.Append(mc2[i].Groups[13].Value);
+                sb.Append(", 説明:");
+                sb.Append(mc2[i].Groups[15].Value);
+
+                // リストに格納
+                moveList.Add(sb.ToString());
+
+                // stringbuilderをクリア
+                sb.Clear();
+
+            }
+
+
             // すべての技が4つない場合
-            if (mc.Count < 4)
+            if (mc.Count + mc2.Count < 4)
                 return;
 
             // すべての技が4つしかなくその中で重複がある場合
-            if (mc.Count == 4 && (strArray[0].Equals(strArray[1]) || strArray[0].Equals(strArray[2]) || strArray[0].Equals(strArray[3]) || strArray[1].Equals(strArray[2]) || strArray[1].Equals(strArray[3]) || strArray[2].Equals(strArray[3])))
+            if ((mc.Count + mc2.Count == 4) && (moveList[0].Equals(moveList[1]) || moveList[0].Equals(moveList[2]) || moveList[0].Equals(moveList[3]) || moveList[1].Equals(moveList[2]) || moveList[1].Equals(moveList[3]) || moveList[2].Equals(moveList[3])))
                 return;
 
             // 技を乱数で選ぶ
@@ -184,13 +218,17 @@ namespace Pokemon
             // 乱数を添え時に使い重複がないようにフィールドに格納
             do
             {
-                _move1 = strArray[r.Next(0, mc.Count)];
-                _move2 = strArray[r.Next(0, mc.Count)];
-                _move3 = strArray[r.Next(0, mc.Count)];
-                _move4 = strArray[r.Next(0, mc.Count)];
+                _move1 = moveList[r.Next(0, moveList.Count)];
+                _move2 = moveList[r.Next(0, moveList.Count)];
+                _move3 = moveList[r.Next(0, moveList.Count)];
+                _move4 = moveList[r.Next(0, moveList.Count)];
             } while (_move1.Equals(_move2) || _move1.Equals(_move3) || _move1.Equals(_move4) || _move2.Equals(_move3) || _move2.Equals(_move4) || _move3.Equals(_move4));
-            
+
+            moveList = null;
+
+            sb = null;
         }
+
 
 
         /* --- メソッド --- */
