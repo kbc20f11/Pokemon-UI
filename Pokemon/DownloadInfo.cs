@@ -8,6 +8,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenQA.Selenium.Chrome;
+
 
 /// <summary>
 /// ポケモンの情報をダウンロードしてくるクラスです
@@ -71,24 +73,25 @@ namespace Pokemon
             // ダウンロードした文字列を格納するローカル変数htmlを用意
             string html = string.Empty;
 
+            var options = new ChromeOptions();
+
+            // ヘッドレスモードで実行
+            //options.AddArgument("--headless");
 
             // インターネットからポケモンデータを取得
-            try
+            using (var driver = new ChromeDriver(options))
             {
-                using (WebClient webClient = new WebClient())
+                try
                 {
-                    webClient.Headers.Add("user-agent", userAgent);
-                    webClient.Encoding = Encoding.GetEncoding(encoding);
-                    html = webClient.DownloadString(GetPokemonUrl());
+                    driver.Navigate().GoToUrl(GetPokemonUrl());
+                    html = driver.PageSource;
 
                 }
-
+                finally
+                {
+                    driver.Dispose();
+                }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
 
 
             // パターンに一致したところをそれぞれ抜き出す
