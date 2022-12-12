@@ -73,13 +73,16 @@ namespace Pokemon
             // ダウンロードした文字列を格納するローカル変数htmlを用意
             string html = string.Empty;
 
+            // セレニウムを非表示で実行
             var options = new ChromeOptions();
-
             // ヘッドレスモードで実行
             //options.AddArgument("--headless");
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            options.AddArgument("--window-position=-32000,-32000");
 
             // インターネットからポケモンデータを取得
-            using (var driver = new ChromeDriver(options))
+            using (var driver = new ChromeDriver(service, options))
             {
                 try
                 {
