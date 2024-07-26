@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
@@ -100,13 +101,15 @@ namespace Pokemon
 				cm = ChemistryMultiplier(m, df.GetType()) * ChemistryMultiplier(m, df.GetType2());
 			}
 
+            Debug.WriteLine($"Move Type: {m.GetType()}, Defender Type: {df.GetType()}, Defender Type2: {df.GetType2()}, cm: {cm}");
 
-			// 効果判定
-			if (cm >= 2)
+
+            // 効果判定
+            if (cm >= 2.0d)
 			{
 				_form1Obj.labelA.Text += "\n効果は抜群だ";
 			}
-			if (cm > 0 && cm <= 0.5)
+			if (cm > 0.0d && cm <= 0.5d)
 			{
 				_form1Obj.labelA.Text += "\n効果はいまひとつのようだ";
 			}
