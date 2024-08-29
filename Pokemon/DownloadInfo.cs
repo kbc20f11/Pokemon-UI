@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Runtime.ExceptionServices;
@@ -33,8 +34,7 @@ namespace Pokemon
 
         // 正規表現パターン
         private const string regexName = @"<title>(.*?)｜ポケモン図鑑(.*?)｜ポケモン徹底攻略</title>";
-        private const string regexType = @"タイプ</td><td><ul class=""type""><li><a href=""(.*?)""><img src=""(.*?)"" alt=""(.*?)"" /></a></li>(.*?)</ul></td></tr>";
-        private const string regexType2 = @"<a href=""(.*?)""><img src=""(.*?)"" alt=""(.*?)"" />";
+        private const string regexType = @"<tr class=""center""><td class=""c1"">タイプ</td><td><ul class=""type"">((?:<li><a href="".*?""><img src="".*?"" alt=""(.*?)""></a></li>)+)</ul></td></tr>";
         private const string regexHp = @"HP</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
         private const string regexAttack = @"こうげき</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
         private const string regexDefence = @"ぼうぎょ</td>(.*?)&nbsp;(\d+)<span (.*?)</span></td></tr>";
@@ -88,6 +88,8 @@ namespace Pokemon
                 {
                     driver.Navigate().GoToUrl(GetPokemonUrl());
                     html = driver.PageSource;
+                    Debug.WriteLine("あ" + html);
+
 
                 }
                 finally
@@ -105,13 +107,26 @@ namespace Pokemon
             _name = mName.Groups[1].Value;
 
             // タイプ
-            Match mType = Regex.Match(html, regexType); 
-            if (mType.Success)
-                _type = mType.Groups[3].Value;
-            string temp = mType.Groups[4].Value;
-            Match mType2 = Regex.Match(temp, regexType2);
-            if (mType2.Success)
-                _type2 = mType2.Groups[3].Value;
+            var matches = Regex.Matches(html, regexType);
+
+            foreach (Match match in matches)
+            {
+                var typeMatches = Regex.Matches(match.Groups[1].Value, @"alt=""(.*?)""");
+                int index = 1;
+
+                foreach (Match typeMatch in typeMatches)
+                {
+                    if (index == 1)
+                    {
+                        _type = typeMatch.Groups[1].Value;
+                        index++;
+                    }
+                    else if (index == 2)
+                    {
+                        _type2 = typeMatch.Groups[1].Value;
+                    }
+                }
+            }
 
             // HP
             Match mHp = Regex.Match(html, regexHp);
@@ -260,6 +275,7 @@ namespace Pokemon
 
         public new String GetType()
         {
+            Debug.WriteLine("あ" + _type);
             return _type;
         }
 
